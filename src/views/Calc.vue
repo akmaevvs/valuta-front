@@ -19,7 +19,7 @@ export default {
 <style lang="scss" scoped>
 .calc {
   .inner {
-    height: calc(100vh - 100px);
+    height: calc(100vh - 200px);
     justify-content: space-between;
   }
   &__title {
@@ -30,9 +30,10 @@ export default {
   }
   &__button {
     margin: 10px 0 30px 0;
-    padding: 10px 20px 10px 20px;
+    padding: 0px 20px 0px 20px;
     background-color: #0088cc;
     position: relative;
+    min-height: 40px;
     color: #f9f9f9;
     text-decoration: none;
     font-size: 17px;
