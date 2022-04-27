@@ -74,14 +74,15 @@ export default {
     text-decoration: none;
     font-size: 17px;
     border-radius: 4px;
-    transition: all 0.3s ease;
     box-shadow: 4px 4px 10px 0px rgba(124, 124, 124, 0.4);
     overflow: hidden;
     animation: bouncing 2s ease-in-out 0.5s infinite;
+    transition: all 0.3s ease;
 
     &:hover {
-      box-shadow: 4px 4px 10px 0px rgba(124, 124, 124, 0.6);
-      transform: scale(1.02);
+      // box-shadow: 4px 4px 10px 0px rgba(124, 124, 124, 0.6);
+      // transform: scale(1.02) !important;
+      // animation-play-state: paused;
     }
     &:before {
       background-image: url("../assets/img/telegram-logo-small.png");
