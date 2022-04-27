@@ -20,11 +20,11 @@ export default {
 
 <style lang="scss" scoped>
 .footer {
-  background-color: #f2f2f2;
+  background-color: #ebebeb;
   height: 50px;
   width: 100%;
   bottom: 0;
-  position: sticky;
+  position: absolute;
   color: #333;
   &__contact {
     color: #08c;
