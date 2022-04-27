@@ -112,12 +112,15 @@ export default {
 @keyframes bouncing {
   0% {
     transform: scale(1);
+    box-shadow: 4px 4px 10px 0px rgba(124, 124, 124, 0.4);
   }
   15% {
     transform: scale(1.02);
+    box-shadow: 4px 4px 10px 0px rgba(124, 124, 124, 0.6);
   }
   30% {
     transform: scale(1);
+    box-shadow: 4px 4px 10px 0px rgba(124, 124, 124, 0.4);
   }
   100% {
     transform: scale(1);
