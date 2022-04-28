@@ -27,10 +27,7 @@ export default {
 </script>
 <style lang="scss" scoped>
 .home {
-  .inner {
-    height: calc(100vh - 200px);
-    justify-content: space-between;
-  }
+  margin-bottom: 100px;
   &__title {
     color: #333;
     margin-top: 20px;

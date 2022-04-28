@@ -53,6 +53,9 @@ export default {
 
 <style lang="scss" scoped>
 .header {
+  position: sticky;
+  z-index: 10;
+  top: 0;
   background-color: #333;
   height: 50px;
   transition: background-color 0.5s ease;
@@ -100,5 +103,4 @@ export default {
     }
   }
 }
-
 </style>

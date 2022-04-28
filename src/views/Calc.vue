@@ -3,9 +3,7 @@
     <div class="inner d-flex f-center f-column gap-15">
       <h2 class="calc__title">Конвертация денежных средств</h2>
 
-      <a class="calc__button d-flex f-center" @click="check"
-        >Рынки</a
-      >
+      <a class="calc__button d-flex f-center" @click="check">Рынки</a>
     </div>
   </div>
 </template>
@@ -247,7 +245,224 @@ export default {
           precision: 2,
         },
       ],
-      markets:[{"id":"btcrub","name":"BTC/RUB","ask_unit":"btc","bid_unit":"rub","min_ask":"0.00001","min_bid":"5.0"},{"id":"btcuah","name":"BTC/UAH","ask_unit":"btc","bid_unit":"uah","min_ask":"0.00001","min_bid":"1.0"},{"id":"btcusd","name":"BTC/USD","ask_unit":"btc","bid_unit":"usd","min_ask":"0.00001","min_bid":"0.0"},{"id":"btcaed","name":"BTC/AED","ask_unit":"btc","bid_unit":"aed","min_ask":"0.00001","min_bid":"0.0"},{"id":"usdtuah","name":"USDT/UAH","ask_unit":"usdt","bid_unit":"uah","min_ask":"0.1","min_bid":"1.0"},{"id":"usdtrub","name":"USDT/RUB","ask_unit":"usdt","bid_unit":"rub","min_ask":"0.1","min_bid":"5.0"},{"id":"dairub","name":"DAI/RUB","ask_unit":"dai","bid_unit":"rub","min_ask":"0.1","min_bid":"5.0"},{"id":"usdtusd","name":"USDT/USD","ask_unit":"usdt","bid_unit":"usd","min_ask":"0.1","min_bid":"0.0"},{"id":"usdtaed","name":"USDT/AED","ask_unit":"usdt","bid_unit":"aed","min_ask":"0.1","min_bid":"0.0"},{"id":"ethuah","name":"ETH/UAH","ask_unit":"eth","bid_unit":"uah","min_ask":"0.00025","min_bid":"1.0"},{"id":"ethaed","name":"ETH/AED","ask_unit":"eth","bid_unit":"aed","min_ask":"0.00001","min_bid":"0.0"},{"id":"ethusd","name":"ETH/USD","ask_unit":"eth","bid_unit":"usd","min_ask":"0.00025","min_bid":"0.1"},{"id":"daiuah","name":"DAI/UAH","ask_unit":"dai","bid_unit":"uah","min_ask":"0.1","min_bid":"5.0"},{"id":"daiaed","name":"DAI/AED","ask_unit":"dai","bid_unit":"aed","min_ask":"0.00001","min_bid":"0.0"},{"id":"ethrub","name":"ETH/RUB","ask_unit":"eth","bid_unit":"rub","min_ask":"0.00025","min_bid":"5.0"},{"id":"daiusd","name":"DAI/USD","ask_unit":"dai","bid_unit":"usd","min_ask":"0.1","min_bid":"0.1"},{"id":"btcusdc","name":"BTC/USDC","ask_unit":"btc","bid_unit":"usdc","min_ask":"0.00001","min_bid":"0.1"},{"id":"usdcusd","name":"USDC/USD","ask_unit":"usdc","bid_unit":"usd","min_ask":"0.1","min_bid":"0.0"},{"id":"usdcuah","name":"USDC/UAH","ask_unit":"usdc","bid_unit":"uah","min_ask":"0.1","min_bid":"1.0"},{"id":"usdcrub","name":"USDC/RUB","ask_unit":"usdc","bid_unit":"rub","min_ask":"0.1","min_bid":"5.0"},{"id":"usdcaed","name":"USDC/AED","ask_unit":"usdc","bid_unit":"aed","min_ask":"0.1","min_bid":"0.0"},{"id":"btcusdt","name":"BTC/USDT","ask_unit":"btc","bid_unit":"usdt","min_ask":"0.00001","min_bid":"0.1"},{"id":"ethusdt","name":"ETH/USDT","ask_unit":"eth","bid_unit":"usdt","min_ask":"0.00025","min_bid":"0.1"},{"id":"usdcusdt","name":"USDC/USDT","ask_unit":"usdc","bid_unit":"usdt","min_ask":"0.1","min_bid":"0.1"},{"id":"ethusdc","name":"ETH/USDC","ask_unit":"eth","bid_unit":"usdc","min_ask":"0.00025","min_bid":"0.1"},{"id":"ethbtc","name":"ETH/BTC","ask_unit":"eth","bid_unit":"btc","min_ask":"0.00025","min_bid":"0.00001"},{"id":"daiusdt","name":"DAI/USDT","ask_unit":"dai","bid_unit":"usdt","min_ask":"0.1","min_bid":"0.1"}],
+      markets: [
+        {
+          id: "btcrub",
+          name: "BTC/RUB",
+          ask_unit: "btc",
+          bid_unit: "rub",
+          min_ask: "0.00001",
+          min_bid: "5.0",
+        },
+        {
+          id: "btcuah",
+          name: "BTC/UAH",
+          ask_unit: "btc",
+          bid_unit: "uah",
+          min_ask: "0.00001",
+          min_bid: "1.0",
+        },
+        {
+          id: "btcusd",
+          name: "BTC/USD",
+          ask_unit: "btc",
+          bid_unit: "usd",
+          min_ask: "0.00001",
+          min_bid: "0.0",
+        },
+        {
+          id: "btcaed",
+          name: "BTC/AED",
+          ask_unit: "btc",
+          bid_unit: "aed",
+          min_ask: "0.00001",
+          min_bid: "0.0",
+        },
+        {
+          id: "usdtuah",
+          name: "USDT/UAH",
+          ask_unit: "usdt",
+          bid_unit: "uah",
+          min_ask: "0.1",
+          min_bid: "1.0",
+        },
+        {
+          id: "usdtrub",
+          name: "USDT/RUB",
+          ask_unit: "usdt",
+          bid_unit: "rub",
+          min_ask: "0.1",
+          min_bid: "5.0",
+        },
+        {
+          id: "dairub",
+          name: "DAI/RUB",
+          ask_unit: "dai",
+          bid_unit: "rub",
+          min_ask: "0.1",
+          min_bid: "5.0",
+        },
+        {
+          id: "usdtusd",
+          name: "USDT/USD",
+          ask_unit: "usdt",
+          bid_unit: "usd",
+          min_ask: "0.1",
+          min_bid: "0.0",
+        },
+        {
+          id: "usdtaed",
+          name: "USDT/AED",
+          ask_unit: "usdt",
+          bid_unit: "aed",
+          min_ask: "0.1",
+          min_bid: "0.0",
+        },
+        {
+          id: "ethuah",
+          name: "ETH/UAH",
+          ask_unit: "eth",
+          bid_unit: "uah",
+          min_ask: "0.00025",
+          min_bid: "1.0",
+        },
+        {
+          id: "ethaed",
+          name: "ETH/AED",
+          ask_unit: "eth",
+          bid_unit: "aed",
+          min_ask: "0.00001",
+          min_bid: "0.0",
+        },
+        {
+          id: "ethusd",
+          name: "ETH/USD",
+          ask_unit: "eth",
+          bid_unit: "usd",
+          min_ask: "0.00025",
+          min_bid: "0.1",
+        },
+        {
+          id: "daiuah",
+          name: "DAI/UAH",
+          ask_unit: "dai",
+          bid_unit: "uah",
+          min_ask: "0.1",
+          min_bid: "5.0",
+        },
+        {
+          id: "daiaed",
+          name: "DAI/AED",
+          ask_unit: "dai",
+          bid_unit: "aed",
+          min_ask: "0.00001",
+          min_bid: "0.0",
+        },
+        {
+          id: "ethrub",
+          name: "ETH/RUB",
+          ask_unit: "eth",
+          bid_unit: "rub",
+          min_ask: "0.00025",
+          min_bid: "5.0",
+        },
+        {
+          id: "daiusd",
+          name: "DAI/USD",
+          ask_unit: "dai",
+          bid_unit: "usd",
+          min_ask: "0.1",
+          min_bid: "0.1",
+        },
+        {
+          id: "btcusdc",
+          name: "BTC/USDC",
+          ask_unit: "btc",
+          bid_unit: "usdc",
+          min_ask: "0.00001",
+          min_bid: "0.1",
+        },
+        {
+          id: "usdcusd",
+          name: "USDC/USD",
+          ask_unit: "usdc",
+          bid_unit: "usd",
+          min_ask: "0.1",
+          min_bid: "0.0",
+        },
+        {
+          id: "usdcuah",
+          name: "USDC/UAH",
+          ask_unit: "usdc",
+          bid_unit: "uah",
+          min_ask: "0.1",
+          min_bid: "1.0",
+        },
+        {
+          id: "usdcrub",
+          name: "USDC/RUB",
+          ask_unit: "usdc",
+          bid_unit: "rub",
+          min_ask: "0.1",
+          min_bid: "5.0",
+        },
+        {
+          id: "usdcaed",
+          name: "USDC/AED",
+          ask_unit: "usdc",
+          bid_unit: "aed",
+          min_ask: "0.1",
+          min_bid: "0.0",
+        },
+        {
+          id: "btcusdt",
+          name: "BTC/USDT",
+          ask_unit: "btc",
+          bid_unit: "usdt",
+          min_ask: "0.00001",
+          min_bid: "0.1",
+        },
+        {
+          id: "ethusdt",
+          name: "ETH/USDT",
+          ask_unit: "eth",
+          bid_unit: "usdt",
+          min_ask: "0.00025",
+          min_bid: "0.1",
+        },
+        {
+          id: "usdcusdt",
+          name: "USDC/USDT",
+          ask_unit: "usdc",
+          bid_unit: "usdt",
+          min_ask: "0.1",
+          min_bid: "0.1",
+        },
+        {
+          id: "ethusdc",
+          name: "ETH/USDC",
+          ask_unit: "eth",
+          bid_unit: "usdc",
+          min_ask: "0.00025",
+          min_bid: "0.1",
+        },
+        {
+          id: "ethbtc",
+          name: "ETH/BTC",
+          ask_unit: "eth",
+          bid_unit: "btc",
+          min_ask: "0.00025",
+          min_bid: "0.00001",
+        },
+        {
+          id: "daiusdt",
+          name: "DAI/USDT",
+          ask_unit: "dai",
+          bid_unit: "usdt",
+          min_ask: "0.1",
+          min_bid: "0.1",
+        },
+      ],
     };
   },
   components: {},
@@ -262,10 +477,8 @@ export default {
 </script>
 <style lang="scss" scoped>
 .calc {
-  .inner {
-    height: calc(100vh - 100px);
-    justify-content: space-between;
-  }
+  margin-bottom: 100px;
+
   &__title {
     color: #333;
     margin-top: 20px;

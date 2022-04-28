@@ -24,7 +24,9 @@ export default {
   height: 50px;
   width: 100%;
   bottom: 0;
-  position: absolute;
+  position: sticky;
+  bottom: 0;
+  z-index: 7;
   color: #333;
   &__contact {
     color: #08c;
