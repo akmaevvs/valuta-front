@@ -27,7 +27,7 @@ export default {
 </script>
 <style lang="scss" scoped>
 .home {
-  margin-bottom: 100px;
+  margin-bottom: 50px;
   &__title {
     color: #333;
     margin-top: 20px;

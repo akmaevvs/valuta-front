@@ -477,7 +477,7 @@ export default {
 </script>
 <style lang="scss" scoped>
 .calc {
-  margin-bottom: 100px;
+  margin-bottom: 50px;
 
   &__title {
     color: #333;
