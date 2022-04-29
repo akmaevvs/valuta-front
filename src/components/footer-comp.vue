@@ -24,7 +24,7 @@ export default {
   height: 50px;
   width: 100%;
   bottom: 0;
-  position: fixed;
+  position: absolute;
   bottom: 0;
   z-index: 7;
   color: #333;

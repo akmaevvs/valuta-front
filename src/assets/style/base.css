@@ -97,5 +97,6 @@ button {
 }
 .modal-enter-from,
 .modal-leave-to {
+  margin-top: -120px;
   opacity: 0;
 }

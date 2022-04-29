@@ -27,16 +27,19 @@
             type="number"
             @change="askChanged"
             v-model="askValue"
+            placeholder="Отдаете"
           />
           <span class="converter__currency-note"
             >1 {{ selectedAsk }} = 0.0069 {{ selectedBid }}</span
           >
           <hr />
+          <div class="circle-change"></div>
           <input
             class="converter__input"
             type="number"
             @change="bidChanged"
             v-model="bidValue"
+            placeholder="Получите"
           />
           <span class="converter__currency-note"
             >1 {{ selectedBid }} = 144.547 {{ selectedAsk }}</span
@@ -102,19 +105,16 @@
       >
         Обменять
       </button>
-    </div>
-    <transition name="modal">
-      <div class="modal-more-units" v-if="showModal">
-        <div class="modal-message">
+      <transition name="modal">
+        <div v-if="fixCurrency" class="modal-message">
           <p>
             Конвертер валют онлайн - инструмент, который позволит вам рассчитать
             соотношения актуальных курсов денежных средств всего мира на
             сегодня.
           </p>
-          <button class="ok-button" @click="hideModal">OK</button>
         </div>
-      </div>
-    </transition>
+      </transition>
+    </div>
   </div>
 </template>
 
@@ -611,7 +611,7 @@ export default {
       displayUnitsBot: ["RUB", "USD", "BTC", "USDT"],
       selectedAsk: "RUB",
       selectedBid: "USD",
-      askValue: 100,
+      askValue: null,
       bidValue: null,
       showMoreAsk: false,
       showMoreBid: false,
@@ -661,7 +661,7 @@ export default {
             parseFloat(this.depthUsdtRub[i].price) * // текущий курс
               parseFloat(this.depthUsdtRub[i].volume); // количество usdt
         } else {
-          ost = parseFloat(this.depthUsdtRub[i].volume) + curSum; 
+          ost = parseFloat(this.depthUsdtRub[i].volume) + curSum;
           allSum = allSum + parseFloat(this.depthUsdtRub[i].price) * ost;
 
           curSum = 0;
@@ -670,7 +670,9 @@ export default {
       }
 
       curCur = allSum / this.askValue; // текущий курс = всего руб / введенное значений
-      this.bidValue = this.round(this.askValue * curCur + this.askValue * 0.001 * curCur); // итог = введенное значений * текущий курс + текущий курс * комиссия * текущий курс
+      this.bidValue = this.round(
+        this.askValue * curCur + this.askValue * 0.001 * curCur
+      ); // итог = введенное значений * текущий курс + текущий курс * комиссия * текущий курс
     },
     bidChanged() {},
     selectAsk(askUnit) {
@@ -715,6 +717,19 @@ export default {
 };
 </script>
 <style lang="scss" scoped>
+.circle-change {
+  position: absolute;
+  width: 50px;
+  height: 50px;
+  right: 40px;
+  background: #fff;
+  border: 1px solid #dfdfdf;
+  border-radius: 50px;
+  background-image: url("../assets/img/change.png");
+  background-size: 40px 40px;
+  background-repeat: no-repeat;
+  background-position: center;
+}
 .fix-block {
   border: 2px solid transparent;
   border-radius: 5px;
@@ -731,42 +746,30 @@ export default {
 .red-border {
   border-color: #ff0000a9;
 }
-.modal-more-units {
-  z-index: 50;
-  position: absolute;
-  background: #000000b3;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
+
+.modal-message {
+  border: 1px solid #dfdfdf;
   display: flex;
-  justify-content: center;
-  align-items: center;
-  .modal-message {
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-    max-width: 240px;
-    text-align: justify;
-    background: #fff;
-    padding: 20px;
-    border-radius: 5px;
-    margin: 0 20px;
-  }
-  .ok-button {
-    padding: 5px 10px;
-    width: 50%;
-    background-color: #97ccfc;
-    box-shadow: inset 0px -24px 10px -9px #0000000e,
-      inset 0px 24px 10px -9px #ffffff61;
-    align-self: center;
-    transition: background-color 0.3s ease;
-    border-radius: 5px;
-    &:hover {
-      background-color: #dceeff;
-      box-shadow: inset 0px -24px 10px -9px #0000000e,
-        inset 0px 24px 10px -9px #ffffff61;
-    }
+  flex-direction: column;
+  gap: 20px;
+  width: 100%;
+  max-width: 410px;
+  text-align: justify;
+  background: #fff;
+  padding: 20px;
+  border-radius: 5px;
+  margin-left: 20px;
+  margin-right: 20px;
+}
+.ok-button {
+  padding: 5px 10px;
+  width: 50%;
+  background-color: #ebebeb;
+  align-self: center;
+  transition: background-color 0.3s ease;
+  border-radius: 5px;
+  &:hover {
+    background-color: #f0f0f0;
   }
 }
 .more-units {
@@ -795,9 +798,7 @@ export default {
     text-align: center;
     cursor: pointer;
     &:hover {
-      background-color: #dceeff;
-      box-shadow: inset 0px -24px 10px -9px #0000000e,
-        inset 0px 24px 10px -9px #ffffff61;
+      background-color: #f0f0f0;
       transition: background-color 0.3s ease;
     }
     &:first-child {
@@ -811,9 +812,7 @@ export default {
   // box-shadow: 0px 0px 8px 0px rgba(0, 0, 0, 0.19);
 }
 .active {
-  background-color: #97ccfc;
-  box-shadow: inset 0px -24px 10px -9px #0000000e,
-    inset 0px 24px 10px -9px #ffffff61;
+  background-color: #ebebeb;
   transition: background-color 0.3s ease;
   & button {
     color: #000;
@@ -821,12 +820,12 @@ export default {
 }
 .converter-container {
   overflow: hidden;
-  // border: 1px solid #dfdfdf;
+  border: 1px solid #dfdfdf;
   border-radius: 5px;
   background-color: #fff;
   // box-shadow: 4px 4px 8px 0px rgba(0, 0, 0, 0.08);
   // box-shadow: 0px 0px 8px 0px rgba(0, 0, 0, 0.08);
-  box-shadow: 0px 0px 8px 0px rgba(0, 0, 0, 0.19);
+  // box-shadow: 0px 0px 8px 0px rgba(0, 0, 0, 0.19);
 }
 .converter {
   &__values {
@@ -851,8 +850,7 @@ export default {
     outline: none;
     width: 100%;
     padding: 10px;
-    padding-left: 20px;
-    font-size: 40px;
+    font-size: 35px;
     &:first-child {
       // border-bottom: 1px solid #dfdfdf;
     }
@@ -874,9 +872,7 @@ export default {
     transition: background-color 0.2s ease;
     cursor: pointer;
     &:hover {
-      background-color: #dceeff;
-      box-shadow: inset 0px -24px 10px -9px #0000000e,
-        inset 0px 24px 10px -9px #ffffff61;
+      background-color: #f0f0f0;
       transition: background-color 0.3s ease;
     }
     &:first-child {
@@ -929,7 +925,7 @@ export default {
   }
 }
 .calc {
-  margin-bottom: 50px;
+  margin-bottom: 80px;
 
   &__title {
     color: #333;
@@ -939,17 +935,15 @@ export default {
   }
 
   &__button {
-    margin-bottom: 30px;
+    // margin-bottom: 30px;
     padding: 10px 20px 10px 10px;
-    background-color: #0088cc;
+    background-color: #333;
     position: relative;
     color: #f9f9f9;
     text-decoration: none;
     font-size: 17px;
     border-radius: 4px;
-    box-shadow: 4px 4px 10px 0px rgba(124, 124, 124, 0.4);
     overflow: hidden;
-    animation: bouncing 2s ease-in-out 0.5s infinite;
     transition: all 0.3s ease;
     cursor: pointer;
     &--disabled {

@@ -55,26 +55,19 @@ export default {
         box-shadow: 4px 4px 10px 0px rgba(124, 124, 124, 0.2);
         transform: scale(1.02);
       }
-      &:before {
-        content: "—";
-        position: relative;
-        padding-right: 5px;
-      }
     }
   }
   &__button {
     margin: 10px 0 30px 0;
     padding: 0px 20px 0px 10px;
-    background-color: #0088cc;
+    background-color: #333;
     position: relative;
     min-height: 40px;
     color: #f9f9f9;
     text-decoration: none;
     font-size: 17px;
     border-radius: 4px;
-    box-shadow: 4px 4px 10px 0px rgba(124, 124, 124, 0.4);
     overflow: hidden;
-    animation: bouncing 2s ease-in-out 0.5s infinite;
     transition: all 0.3s ease;
 
     &:hover {
@@ -106,23 +99,6 @@ export default {
       position: absolute;
       animation: glaring 5s ease-in-out 0.05s infinite;
     }
-  }
-}
-@keyframes bouncing {
-  0% {
-    transform: scale(1);
-    box-shadow: 4px 4px 10px 0px rgba(124, 124, 124, 0.4);
-  }
-  15% {
-    transform: scale(1.02);
-    box-shadow: 4px 4px 10px 0px rgba(124, 124, 124, 0.6);
-  }
-  30% {
-    transform: scale(1);
-    box-shadow: 4px 4px 10px 0px rgba(124, 124, 124, 0.4);
-  }
-  100% {
-    transform: scale(1);
   }
 }
 @keyframes glaring {
