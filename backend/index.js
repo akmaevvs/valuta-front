@@ -73,6 +73,17 @@ app.post("/markets", (req, res) => {
       res.send(err);
     });
 });
+app.post("/depth", (req, res) => {
+  // console.log(req.body)
+  axios
+    .get("https://" + host + "/api/v2/depth")
+    .then((response) => {
+      res.send(response.data);
+    })
+    .catch((err) => {
+      res.send(err);
+    });
+});
 
 app.listen(8080, () => {
   console.log(`Example app listening on port ${8080}`);

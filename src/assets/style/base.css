@@ -70,3 +70,32 @@ button {
   margin-top: -100vh;
   opacity: 0;
 }
+
+.more-units-bottom-enter-active,
+.more-units-bottom-leave-active {
+  transition: all 0.6s ease;
+}
+.more-units-bottom-enter-from,
+.more-units-bottom-leave-to {
+  margin-bottom: -220px;
+  opacity: 0;
+}
+
+.more-units-top-enter-active,
+.more-units-top-leave-active {
+  transition: all 0.6s ease;
+}
+.more-units-top-enter-from,
+.more-units-top-leave-to {
+  margin-top: -220px;
+  opacity: 0;
+}
+
+.modal-enter-active,
+.modal-leave-active {
+  transition: all 0.6s ease;
+}
+.modal-enter-from,
+.modal-leave-to {
+  opacity: 0;
+}
