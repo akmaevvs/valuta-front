@@ -25,25 +25,33 @@
           <input
             class="converter__input"
             type="number"
-            @change="askChanged"
+            @input="askChanged"
             v-model="askValue"
             placeholder="Отдаете"
           />
-          <span class="converter__currency-note"
-            >1 {{ selectedAsk }} = 0.0069 {{ selectedBid }}</span
-          >
+          <span class="converter__currency-note">
+            <template v-if="this.type === 'ask'">
+              1 {{ selectedAsk }} =
+              {{ this.round(this.curCur + this.curCur * 0.002) }}
+              {{ selectedBid }}
+            </template>
+          </span>
           <hr />
-          <div class="circle-change"></div>
+          <div class="circle-change" @click="changeAskBid"></div>
           <input
             class="converter__input"
             type="number"
-            @change="bidChanged"
+            @input="bidChanged"
             v-model="bidValue"
             placeholder="Получите"
           />
-          <span class="converter__currency-note"
-            >1 {{ selectedBid }} = 144.547 {{ selectedAsk }}</span
-          >
+          <span class="converter__currency-note">
+            <template v-if="this.type === 'bid'">
+              1 {{ selectedBid }} =
+              {{ this.round(this.curCur + this.curCur * 0.002) }}
+              {{ selectedAsk }}
+            </template>
+          </span>
           <transition name="more-units-top">
             <ul class="more-units more-units--top" v-if="showMoreAsk">
               <li
@@ -119,7 +127,7 @@
 </template>
 
 <script>
-// import axios from "axios";
+import axios from "axios";
 export default {
   name: "Calc",
   data() {
@@ -127,7 +135,6 @@ export default {
       fixCurrency: false,
       showRedBorder: false,
       showModal: false,
-      jwt: "eyJhbGciOiJSUzI1NiJ9.eyJpYXQiOjE2NTExNjk4NjYsImV4cCI6MTY1MTI1NjI2Niwic3ViIjoic2Vzc2lvbiIsImlzcyI6ImJhcm9uZyIsImF1ZCI6WyJwZWF0aW8iXSwianRpIjoiQ0I0RjY3MjdBNkNFQjNEMDQ4NUE5REY0IiwidWlkIjoiSUQ4N0IyNzkxREYwIiwiZW1haWwiOiJtYWtlbW9uZXlub3R3YXIxQGdtYWlsLmNvbSIsInJvbGUiOiJtZW1iZXIiLCJsZXZlbCI6Miwic3RhdGUiOiJhY3RpdmUiLCJhcGlfa2lkIjoiNTZlMjVlNzQtOGU0NC00YTgxLWEwNDMtYWE1ZjEwMDdhYjBjIn0.UbovdCj7Rzlm2hRAeR4bE3cbUN_6OdVykF6rvCNX7n8KJNlm_9JSU8MuVxKvDkypsWW74QdzxIOFeDZWdq1Uf4For-NNfXSIchGxmpsWRGD2qKyh7IGVErJofQwSbbHrHDmSpA22Rh8BDgLCIT_YsqlmZuG6TckIzB14gXwOGUDQTAuXRHPs5_hS1ZG_gAfHwlNr_U8-IIZASumD3dnoPaEIZt1Mno-diGWXcDSjf2bsw53qo5Ous0vMd868bNEUfYvoJa0mBt85KtYhpHZJElrA7W6mI_7JrJk3g1xcOTKOsPXViBODGxc8lz5i5eg7VrHmtCaFg6V3QtRJW9Dyiw",
       currencies: [
         {
           id: "aed",
@@ -576,6 +583,11 @@ export default {
           min_bid: "0.1",
         },
       ],
+      selectedMarket: "rubusd",
+      selectedMarketReverse: "usdrub",
+      selectedDepth: [],
+      selectedDepthToUsdt: [],
+      selectedDepthFromUsdt: [],
       depthUsdtRub: [
         {
           price: "74.11",
@@ -615,10 +627,18 @@ export default {
       bidValue: null,
       showMoreAsk: false,
       showMoreBid: false,
+      curCur: null,
+      type: null,
     };
   },
   components: {},
   computed: {
+    curValue() {
+      if (this.type === "bid") {
+        return this.round(1 / this.curCur);
+      }
+      return this.curCur;
+    },
     // AllUnits() {
     //   // return new Set(
     //   //   this.markets
@@ -651,28 +671,82 @@ export default {
       let i = 0; // индекс стакана
       let allSum = 0; // всего руб
       let ost = 0;
-      while (curSum != 0) {
-        console.log(this.depthUsdtRub[i]);
-        curSum = curSum - parseFloat(this.depthUsdtRub[i].volume); // кол-во (стакан)
-        console.log(curSum);
-        if (curSum >= 0) {
-          allSum = // всего руб
-            allSum +
-            parseFloat(this.depthUsdtRub[i].price) * // текущий курс
-              parseFloat(this.depthUsdtRub[i].volume); // количество usdt
-        } else {
-          ost = parseFloat(this.depthUsdtRub[i].volume) + curSum;
-          allSum = allSum + parseFloat(this.depthUsdtRub[i].price) * ost;
+      if (this.type === "ask") {
+        while (curSum != 0) {
+          if (i == this.selectedDepth.length) {
+            console.log("Невозможно посчитвать");
+            return;
+          }
+          console.log(i, this.selectedDepth.length);
+          curSum = curSum - parseFloat(this.selectedDepth[i].volume); // кол-во (стакан)
+          if (curSum >= 0) {
+            allSum = // всего руб
+              allSum +
+              parseFloat(this.selectedDepth[i].price) * // текущий курс
+                parseFloat(this.selectedDepth[i].volume); // количество usdt
+          } else {
+            ost = parseFloat(this.selectedDepth[i].volume) + curSum;
+            allSum = allSum + parseFloat(this.selectedDepth[i].price) * ost;
 
-          curSum = 0;
+            curSum = 0;
+          }
+          i = i + 1;
         }
-        i = i + 1;
+      } else if (this.type === "bid") {
+        while (curSum != 0) {
+          if (i == this.selectedDepth.length) {
+            alert("Невозможно посчитвать")
+            console.log("Невозможно посчитвать");
+            return;
+          }
+          console.log(i, this.selectedDepth.length);
+          curSum = curSum - parseFloat(this.selectedDepth[i].amount); // кол-во (стакан)
+          if (curSum >= 0) {
+            allSum = // всего руб
+              allSum +
+              parseFloat(this.selectedDepth[i].price) * // текущий курс
+                parseFloat(this.selectedDepth[i].amount); // количество usdt
+          } else {
+            ost = parseFloat(this.selectedDepth[i].amount) + curSum;
+            allSum = allSum + parseFloat(this.selectedDepth[i].price) * ost;
+
+            curSum = 0;
+          }
+          i = i + 1;
+        }
       }
 
       curCur = allSum / this.askValue; // текущий курс = всего руб / введенное значений
-      this.bidValue = this.round(
-        this.askValue * curCur + this.askValue * 0.001 * curCur
-      ); // итог = введенное значений * текущий курс + текущий курс * комиссия * текущий курс
+      this.curCur = this.round(curCur);
+
+      if (this.type === "ask") {
+        this.bidValue = this.round(
+          this.askValue * curCur + this.askValue * 0.002 * curCur
+        ); // итог = введенное значений * текущий курс + текущий курс * комиссия * текущий курс
+      } else {
+        this.bidValue = this.round(
+          this.askValue / curCur + (this.askValue * 0.002) / curCur
+        );
+      }
+    },
+    changeAskBid() {
+      // [this.askValue, this.bidValue] = [this.bidValue, this.askValue];
+      [this.selectedAsk, this.selectedBid] = [
+        this.selectedBid,
+        this.selectedAsk,
+      ];
+      [this.selectedMarket, this.selectedMarketReverse] = [
+        this.selectedMarketReverse,
+        this.selectedMarket,
+      ];
+      if (!this.displayUnitsTop.includes(this.selectedAsk)) {
+        this.displayUnitsTop[3] = this.selectedAsk;
+      }
+      if (!this.displayUnitsBot.includes(this.selectedBid)) {
+        this.displayUnitsBot[3] = this.selectedBid;
+      }
+      this.selectDepth();
+      this.askChanged();
     },
     bidChanged() {},
     selectAsk(askUnit) {
@@ -681,6 +755,88 @@ export default {
       }
       this.showMoreAsk = false;
       this.selectedAsk = askUnit;
+      this.selectedMarket = `${this.selectedAsk.toLowerCase()}${this.selectedBid.toLowerCase()}`;
+      this.selectedMarketReverse = `${this.selectedBid.toLowerCase()}${this.selectedAsk.toLowerCase()}`;
+      this.selectDepth();
+    },
+    selectDepth() {
+      let type = null;
+      if (
+        this.markets.filter((item) => {
+          return item.id === this.selectedMarket;
+        }).length > 0
+      ) {
+        type = "ask";
+        console.log("ask");
+      } else if (
+        this.markets.filter((item) => {
+          return item.id === this.selectedMarketReverse;
+        }).length > 0
+      ) {
+        type = "bid";
+        console.log("bid");
+      } else {
+        type = "fiat";
+        console.log("fiat-fiat");
+      }
+
+      if (type === "ask" || type === "bid") {
+        console.log(this.selectedMarket, this.selectedMarketReverse);
+        axios
+          .post("https://valuta-back.vercel.app/depth", {
+            marketId:
+              type === "ask" ? this.selectedMarket : this.selectedMarketReverse,
+          })
+          .then((response) => {
+            const { data } = response;
+            if (type === "ask") {
+              this.selectedDepth = data["bids"];
+            } else if (type === "bid") {
+              this.selectedDepth = data["asks"];
+            }
+          })
+          .catch((err) => {
+            console.log(err);
+          })
+          .finally(() => {
+            this.type = type;
+            this.curCur = this.selectedDepth[0].price;
+          });
+      }
+      // if (type === "fiat") {
+      //   this.selectedMarket = "usdt" + this.selectedAsk.toLowerCase();
+      //   axios
+      //     .post("https://valuta-back.vercel.app/depth", {
+      //       marketId: this.selectedMarket,
+      //     })
+      //     .then((response) => {
+      //       const { data } = response;
+      //       this.selectedDepthToUsdt = data["asks"];
+      //       this.selectedMarket = "usdt" + this.selectedBid.toLowerCase();
+      //       axios
+      //         .post("https://valuta-back.vercel.app/depth", {
+      //           marketId: this.selectedMarket,
+      //         })
+      //         .then((response) => {
+      //           const { data } = response;
+      //           this.selectedDepthFromUsdt = data["bid"];
+      //         })
+      //         .catch((err) => {
+      //           console.log(err);
+      //           return;
+      //         });
+      //     })
+      //     .catch((err) => {
+      //       console.log(err);
+      //       return;
+      //     })
+      //     .finally(() => {
+      //       this.curCur = this.round(
+      //         this.selectedDepthToUsdt[0].price /
+      //           this.selectedDepthFromUsdt[0].price
+      //       );
+      //     });
+      // }
     },
     selectBid(bidUnit) {
       if (!this.displayUnitsBot.includes(bidUnit)) {
@@ -688,6 +844,9 @@ export default {
       }
       this.showMoreBid = false;
       this.selectedBid = bidUnit;
+      this.selectedMarket = `${this.selectedAsk.toLowerCase()}${this.selectedBid.toLowerCase()}`;
+      this.selectedMarketReverse = `${this.selectedBid.toLowerCase()}${this.selectedAsk.toLowerCase()}`;
+      this.selectDepth();
     },
     ShowModal() {
       this.showRedBorder = false;
@@ -706,12 +865,6 @@ export default {
         window.open("https://t.me/morismoss", "_self");
         // this.router.push("https://t.me/morismoss");
       }
-      // this.markets.forEach((item) => {
-      //   axios.post("http://localhost:8080/depth", {
-      //     jwt: this.jwt,
-      //     id: item.id,
-      //   });
-      // });
     },
   },
 };
@@ -729,6 +882,7 @@ export default {
   background-size: 40px 40px;
   background-repeat: no-repeat;
   background-position: center;
+  top: 93px;
 }
 .fix-block {
   border: 2px solid transparent;
