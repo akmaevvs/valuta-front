@@ -1,5 +1,5 @@
 <template>
-  <div class="calc d-flex f-center">
+  <div class="calc d-flex f-center f-column">
     <div class="inner d-flex f-center f-column gap-15">
       <h2 class="calc__title">Конвертация денежных средств</h2>
       <div class="converter-container d-flex f-column">
@@ -24,15 +24,16 @@
         <div class="converter__values d-flex f-column">
           <input
             class="converter__input"
-            type="number"
+            type="text"
             @input="askChanged"
             v-model="askValue"
             placeholder="Отдаете"
+            :disabled="loadingDepth"
           />
           <span class="converter__currency-note">
-            <template v-if="this.type === 'ask'">
+            <template v-if="askValue && this.type === 'ask'">
               1 {{ selectedAsk }} =
-              {{ this.round(this.curCur + this.curCur * 0.002) }}
+              {{ this.round(this.curCur) }}
               {{ selectedBid }}
             </template>
           </span>
@@ -40,15 +41,16 @@
           <div class="circle-change" @click="changeAskBid"></div>
           <input
             class="converter__input"
-            type="number"
+            type="text"
             @input="bidChanged"
             v-model="bidValue"
             placeholder="Получите"
+            :disabled="loadingDepth"
           />
           <span class="converter__currency-note">
-            <template v-if="this.type === 'bid'">
+            <template v-if="askValue && this.type === 'bid'">
               1 {{ selectedBid }} =
-              {{ this.round(this.curCur + this.curCur * 0.002) }}
+              {{ this.round(this.curCur) }}
               {{ selectedAsk }}
             </template>
           </span>
@@ -123,6 +125,7 @@
         </div>
       </transition>
     </div>
+    <div v-if="loadingDepth">Загрузка курса</div>
   </div>
 </template>
 
@@ -629,6 +632,7 @@ export default {
       showMoreBid: false,
       curCur: null,
       type: null,
+      loadingDepth: false,
     };
   },
   components: {},
@@ -655,7 +659,11 @@ export default {
   },
   methods: {
     round(num) {
-      return Math.round(num * 100) / 100;
+      let del = 2;
+      if (num < 0.1) {
+        del = 8;
+      }
+      return parseFloat(num).toFixed(del);
     },
     ShowMoreAsk() {
       this.showMoreAsk = !this.showMoreAsk;
@@ -666,12 +674,14 @@ export default {
       this.showMoreBid = !this.showMoreBid;
     },
     askChanged() {
+      // this.askValue = this.formatCurrency(this.askValue);
       let curSum = this.askValue; // кол-во (своё)
       let curCur = 0; // текущий курс
       let i = 0; // индекс стакана
       let allSum = 0; // всего руб
       let ost = 0;
       if (this.type === "ask") {
+        console.log(1);
         while (curSum != 0) {
           if (i == this.selectedDepth.length) {
             console.log("Невозможно посчитвать");
@@ -693,9 +703,10 @@ export default {
           i = i + 1;
         }
       } else if (this.type === "bid") {
+        console.log(2);
         while (curSum != 0) {
           if (i == this.selectedDepth.length) {
-            alert("Невозможно посчитвать")
+            alert("Невозможно посчитвать");
             console.log("Невозможно посчитвать");
             return;
           }
@@ -721,7 +732,7 @@ export default {
 
       if (this.type === "ask") {
         this.bidValue = this.round(
-          this.askValue * curCur + this.askValue * 0.002 * curCur
+          this.askValue * curCur - this.askValue * 0.002 * curCur
         ); // итог = введенное значений * текущий курс + текущий курс * комиссия * текущий курс
       } else {
         this.bidValue = this.round(
@@ -730,7 +741,7 @@ export default {
       }
     },
     changeAskBid() {
-      // [this.askValue, this.bidValue] = [this.bidValue, this.askValue];
+      [this.askValue, this.bidValue] = [this.bidValue, this.askValue];
       [this.selectedAsk, this.selectedBid] = [
         this.selectedBid,
         this.selectedAsk,
@@ -746,9 +757,76 @@ export default {
         this.displayUnitsBot[3] = this.selectedBid;
       }
       this.selectDepth();
-      this.askChanged();
+      // this.askChanged();
     },
-    bidChanged() {},
+    bidChanged() {
+      // this.bidValue = this.formatCurrency(this.bidValue);
+      let curSum = this.bidValue; // кол-во (своё)
+      let curCur = 0; // текущий курс
+      let i = 0; // индекс стакана
+      let allSum = 0; // всего руб
+      let ost = 0;
+      if (this.type === "bid") {
+        console.log(1);
+        while (curSum != 0) {
+          if (i == this.selectedDepth.length) {
+            console.log("Невозможно посчитвать");
+            return;
+          }
+          console.log(i, this.selectedDepth.length);
+          curSum = curSum - parseFloat(this.selectedDepth[i].volume); // кол-во (стакан)
+          if (curSum >= 0) {
+            allSum = // всего руб
+              allSum +
+              parseFloat(this.selectedDepth[i].price) * // текущий курс
+                parseFloat(this.selectedDepth[i].volume); // количество usdt
+          } else {
+            ost = parseFloat(this.selectedDepth[i].volume) + curSum;
+            allSum = allSum + parseFloat(this.selectedDepth[i].price) * ost;
+
+            curSum = 0;
+          }
+          i = i + 1;
+        }
+      } else if (this.type === "ask") {
+        console.log(2);
+        while (curSum != 0) {
+          if (i == this.selectedDepth.length) {
+            alert("Невозможно посчитвать");
+            console.log("Невозможно посчитвать");
+            return;
+          }
+          console.log(i, this.selectedDepth.length);
+          curSum = curSum - parseFloat(this.selectedDepth[i].amount); // кол-во (стакан)
+          if (curSum >= 0) {
+            allSum = // всего руб
+              allSum +
+              parseFloat(this.selectedDepth[i].price) * // текущий курс
+                parseFloat(this.selectedDepth[i].amount); // количество usdt
+          } else {
+            ost = parseFloat(this.selectedDepth[i].amount) + curSum;
+            allSum = allSum + parseFloat(this.selectedDepth[i].price) * ost;
+
+            curSum = 0;
+          }
+          i = i + 1;
+        }
+      }
+
+      curCur = allSum / this.bidValue; // текущий курс = всего руб / введенное значений
+      console.log(curCur);
+      this.curCur = this.round(curCur);
+
+      if (this.type === "bid") {
+        this.askValue = this.round(
+          this.bidValue * curCur + this.bidValue * 0.002 * curCur
+        ); // итог = введенное значений * текущий курс + текущий курс * комиссия * текущий курс
+      } else {
+        this.askValue = this.round(
+          this.bidValue / curCur + (this.bidValue * 0.002) / curCur
+        );
+      }
+    },
     selectAsk(askUnit) {
       if (!this.displayUnitsTop.includes(askUnit)) {
         this.displayUnitsTop[3] = askUnit;
@@ -760,6 +838,7 @@ export default {
       this.selectDepth();
     },
     selectDepth() {
+      this.loadingDepth = true;
       let type = null;
       if (
         this.markets.filter((item) => {
@@ -801,6 +880,7 @@ export default {
           .finally(() => {
             this.type = type;
             this.curCur = this.selectedDepth[0].price;
+            this.loadingDepth = false;
           });
       }
       // if (type === "fiat") {
@@ -870,6 +950,13 @@ export default {
 };
 </script>
 <style lang="scss" scoped>
+.modal-container {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+}
 .circle-change {
   position: absolute;
   width: 50px;
@@ -882,7 +969,8 @@ export default {
   background-size: 40px 40px;
   background-repeat: no-repeat;
   background-position: center;
-  top: 93px;
+  cursor: pointer;
+  // top: 93px;
 }
 .fix-block {
   border: 2px solid transparent;
@@ -998,6 +1086,7 @@ export default {
   &__currency-note {
     padding: 0px 10px 10px 10px;
     font-size: 12px;
+    min-height: 22px;
   }
   &__input {
     border: none;
