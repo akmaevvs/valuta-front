@@ -131,7 +131,8 @@
       </div>
       <button
         class="calc__button d-flex f-center"
-        :class="{ 'calc__button--disabled': !fixCurrency }"
+        :class="{ 'calc__button--disabled': !fixCurrency || !type || !askValue || !bidValue }"
+        :disabled="!type || !askValue || !bidValue"
         @click="exchange"
       >
         Обменять
@@ -684,8 +685,8 @@ export default {
   methods: {
     async Animate() {},
     round(num, typeAsk, typeBid) {
-      let del = 2
-      if (num < 0.1 || typeAsk === 'BTC', typeBid) {
+      let del = 2;
+      if ((num < 0.1 || typeAsk === "BTC", typeBid)) {
         del = 5;
       }
       // return num;
@@ -700,6 +701,7 @@ export default {
       this.showMoreBid = !this.showMoreBid;
     },
     askChanged() {
+      console.log('askChanged');
       if (this.type === "ask" || this.type === "bid") {
         // this.askValue = this.formatCurrency(this.askValue);
         let curSum = this.askValue; // кол-во (своё)
@@ -759,9 +761,17 @@ export default {
 
         if (this.type === "ask") {
           console.log("cccc");
-          this.bidValue = this.round(this.askValue * (curCur - curCur * 0.002), this.selectedAsk, this.selectedBid); // итог = введенное значений * текущий курс + текущий курс * комиссия * текущий курс
+          this.bidValue = this.round(
+            this.askValue * (curCur - curCur * 0.002),
+            this.selectedAsk,
+            this.selectedBid
+          ); // итог = введенное значений * текущий курс + текущий курс * комиссия * текущий курс
         } else {
-          this.bidValue = this.round(this.askValue / (curCur + curCur * 0.002), this.selectedAsk, this.selectedBid);
+          this.bidValue = this.round(
+            this.askValue / (curCur + curCur * 0.002),
+            this.selectedAsk,
+            this.selectedBid
+          );
         }
       } else if (this.type === "fiat") {
         console.log(2351253);
@@ -794,7 +804,7 @@ export default {
           i = i + 1;
         }
 
-        curCur =  allSum / this.askValue; // текущий курс = всего руб / введенное значений
+        curCur = allSum / this.askValue; // текущий курс = всего руб / введенное значений
 
         let bidValue = this.round(this.askValue / (curCur + 0.002 * curCur));
 
@@ -856,8 +866,6 @@ export default {
       if (!this.displayUnitsBot.includes(this.selectedBid)) {
         this.displayUnitsBot[3] = this.selectedBid;
       }
-      this.selectDepth();
-      // this.askChanged();
     },
     bidChanged() {
       // this.bidValue = this.formatCurrency(this.bidValue);
@@ -919,9 +927,17 @@ export default {
         this.curCur = this.round(curCur);
 
         if (this.type === "bid") {
-          this.askValue = this.round(this.bidValue * (curCur + 0.002 * curCur), this.selectedAsk, this.selectedBid); // итог = введенное значений * текущий курс + текущий курс * комиссия * текущий курс
+          this.askValue = this.round(
+            this.bidValue * (curCur + 0.002 * curCur),
+            this.selectedAsk,
+            this.selectedBid
+          ); // итог = введенное значений * текущий курс + текущий курс * комиссия * текущий курс
         } else {
-          this.askValue = this.round(this.bidValue / (curCur - curCur * 0.002), this.selectedAsk, this.selectedBid);
+          this.askValue = this.round(
+            this.bidValue / (curCur - curCur * 0.002),
+            this.selectedAsk,
+            this.selectedBid
+          );
         }
       } else if (this.type === "fiat") {
         console.log(2351253);
@@ -1006,6 +1022,7 @@ export default {
       this.selectDepth();
     },
     selectDepth() {
+      console.log(this.selectedMarket, this.selectedMarketReverse);
       this.loadingDepth = true;
       let type = null;
       if (
@@ -1022,6 +1039,8 @@ export default {
       ) {
         type = "bid";
         console.log("bid");
+      } else if (this.selectedMarket === this.selectedMarketReverse) {
+        this.type = null;
       } else {
         type = "fiat";
         console.log("fiat-fiat");
@@ -1049,9 +1068,9 @@ export default {
           .finally(() => {
             this.type = type;
             this.curCur = this.selectedDepth[0].price;
+            this.askChanged();
           });
-      }
-      if (type === "fiat") {
+      } else if (type === "fiat") {
         this.selectedMarket = "usdt" + this.selectedAsk.toLowerCase();
         axios
           .post("https://valuta-back.vercel.app/depth", {
@@ -1081,6 +1100,7 @@ export default {
           })
           .finally(() => {
             this.type = "fiat";
+            this.askChanged();
             // this.curCur = this.round(
             //   this.selectedDepthToUsdt[0].price /
             //     this.selectedDepthFromUsdt[0].price
