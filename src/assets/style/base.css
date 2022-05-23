@@ -97,6 +97,15 @@ button {
 }
 .modal-enter-from,
 .modal-leave-to {
-  margin-top: -120px;
+  margin-top: -50px;
+  opacity: 0;
+}
+
+.modal-load-enter-active,
+.modal-load-leave-active {
+  transition: all 0.6s ease;
+}
+.modal-load-enter-from,
+.modal-load-leave-to {
   opacity: 0;
 }

@@ -36,9 +36,20 @@
               {{ this.round(this.curCur) }}
               {{ selectedBid }}
             </template>
+            <template
+              v-if="askValue && this.type === 'fiat' && selectedAsk === 'USD'"
+            >
+              1 {{ selectedAsk }} =
+              {{ this.round(this.curCur) }}
+              {{ selectedBid }}
+            </template>
           </span>
           <hr />
-          <div class="circle-change" @click="changeAskBid"></div>
+          <div
+            class="circle-change"
+            @click="changeAskBid"
+            :class="{ animate: animateStyle }"
+          ></div>
           <input
             class="converter__input"
             type="text"
@@ -49,6 +60,13 @@
           />
           <span class="converter__currency-note">
             <template v-if="askValue && this.type === 'bid'">
+              1 {{ selectedBid }} =
+              {{ this.round(this.curCur) }}
+              {{ selectedAsk }}
+            </template>
+            <template
+              v-if="askValue && this.type === 'fiat' && selectedBid === 'USD'"
+            >
               1 {{ selectedBid }} =
               {{ this.round(this.curCur) }}
               {{ selectedAsk }}
@@ -95,6 +113,9 @@
             ></button>
           </li>
         </ul>
+        <transition name="modal-load">
+          <div class="loading" v-if="loadingDepth">Загрузка курса</div>
+        </transition>
       </div>
       <div class="d-flex fix-block" :class="{ 'red-border': showRedBorder }">
         <input
@@ -125,7 +146,6 @@
         </div>
       </transition>
     </div>
-    <div v-if="loadingDepth">Загрузка курса</div>
   </div>
 </template>
 
@@ -633,6 +653,7 @@ export default {
       curCur: null,
       type: null,
       loadingDepth: false,
+      animateStyle: false,
     };
   },
   mounted() {
@@ -661,11 +682,13 @@ export default {
     // },
   },
   methods: {
-    round(num) {
-      let del = 2;
-      if (num < 0.1) {
-        del = 8;
+    async Animate() {},
+    round(num, typeAsk, typeBid) {
+      let del = 2
+      if (num < 0.1 || typeAsk === 'BTC', typeBid) {
+        del = 5;
       }
+      // return num;
       return parseFloat(num).toFixed(del);
     },
     ShowMoreAsk() {
@@ -732,16 +755,13 @@ export default {
         }
 
         curCur = allSum / this.askValue; // текущий курс = всего руб / введенное значений
-        this.curCur = this.round(curCur);
+        this.curCur = this.round(curCur, this.selectedAsk, this.selectedBid);
 
         if (this.type === "ask") {
-          this.bidValue = this.round(
-            this.askValue * curCur - this.askValue * 0.002 * curCur
-          ); // итог = введенное значений * текущий курс + текущий курс * комиссия * текущий курс
+          console.log("cccc");
+          this.bidValue = this.round(this.askValue * (curCur - curCur * 0.002), this.selectedAsk, this.selectedBid); // итог = введенное значений * текущий курс + текущий курс * комиссия * текущий курс
         } else {
-          this.bidValue = this.round(
-            this.askValue / curCur + (this.askValue * 0.002) / curCur
-          );
+          this.bidValue = this.round(this.askValue / (curCur + curCur * 0.002), this.selectedAsk, this.selectedBid);
         }
       } else if (this.type === "fiat") {
         console.log(2351253);
@@ -774,11 +794,9 @@ export default {
           i = i + 1;
         }
 
-        curCur = allSum / this.askValue; // текущий курс = всего руб / введенное значений
+        curCur =  allSum / this.askValue; // текущий курс = всего руб / введенное значений
 
-        let bidValue = this.round(
-          this.askValue / curCur + (this.askValue * 0.002) / curCur
-        );
+        let bidValue = this.round(this.askValue / (curCur + 0.002 * curCur));
 
         console.log(bidValue);
         curSum = bidValue; // кол-во (своё)
@@ -812,9 +830,7 @@ export default {
         curCur = allSum / bidValue; // текущий курс = всего руб / введенное значений
         // this.curCur = this.round(curCur);
 
-        this.bidValue = this.round(
-          bidValue * curCur - bidValue * 0.002 * curCur
-        );
+        this.bidValue = this.round(bidValue * (curCur - curCur * 0.002));
         this.curCur = this.round(this.askValue / this.bidValue);
       }
     },
@@ -824,6 +840,10 @@ export default {
         this.selectedBid,
         this.selectedAsk,
       ];
+      this.animateStyle = true;
+      setTimeout(() => {
+        this.animateStyle = false;
+      }, 500);
       // [this.selectedMarket, this.selectedMarketReverse] = [
       //   this.selectedMarketReverse,
       //   this.selectedMarket,
@@ -899,13 +919,9 @@ export default {
         this.curCur = this.round(curCur);
 
         if (this.type === "bid") {
-          this.askValue = this.round(
-            this.bidValue * curCur + this.bidValue * 0.002 * curCur
-          ); // итог = введенное значений * текущий курс + текущий курс * комиссия * текущий курс
+          this.askValue = this.round(this.bidValue * (curCur + 0.002 * curCur), this.selectedAsk, this.selectedBid); // итог = введенное значений * текущий курс + текущий курс * комиссия * текущий курс
         } else {
-          this.askValue = this.round(
-            this.bidValue / curCur + (this.bidValue * 0.002) / curCur
-          );
+          this.askValue = this.round(this.bidValue / (curCur - curCur * 0.002), this.selectedAsk, this.selectedBid);
         }
       } else if (this.type === "fiat") {
         console.log(2351253);
@@ -940,9 +956,7 @@ export default {
 
         curCur = allSum / this.bidValue; // текущий курс = всего руб / введенное значений
 
-        let bidValue = this.round(
-          this.bidValue / curCur + (this.bidValue * 0.002) / curCur
-        );
+        let bidValue = this.round(this.bidValue / (curCur - curCur * 0.002));
 
         console.log(bidValue);
         curSum = bidValue; // кол-во (своё)
@@ -976,9 +990,7 @@ export default {
         curCur = allSum / bidValue; // текущий курс = всего руб / введенное значений
         // this.curCur = this.round(curCur);
 
-        this.askValue = this.round(
-          bidValue * curCur - bidValue * 0.002 * curCur
-        );
+        this.askValue = this.round(bidValue * (curCur + 0.002 * curCur));
         this.curCur = this.round(this.askValue / this.bidValue);
       }
     },
@@ -1100,7 +1112,16 @@ export default {
       if (!this.fixCurrency) {
         this.showRedBorder = true;
       } else {
-        window.open("https://t.me/morismoss", "_self");
+        const linkVal =
+          `${this.selectedAsk}_${this.selectedBid}_${this.askValue}_${this.bidValue}`.replaceAll(
+            ".",
+            "-"
+          );
+        console.log(linkVal);
+        window.open(
+          `https://t.me/valuta_node_test_bot?start=${linkVal}`,
+          "_self"
+        );
         // this.router.push("https://t.me/morismoss");
       }
     },
@@ -1108,6 +1129,11 @@ export default {
 };
 </script>
 <style lang="scss" scoped>
+.loading {
+  position: absolute;
+  bottom: -20px;
+  align-self: center;
+}
 .modal-container {
   position: absolute;
   left: 0;
@@ -1219,7 +1245,7 @@ export default {
   }
 }
 .converter-container {
-  overflow: hidden;
+  position: relative;
   border: 1px solid #dfdfdf;
   border-radius: 5px;
   background-color: #fff;
@@ -1415,6 +1441,22 @@ export default {
 @media screen and (max-width: 320px) {
   .calc__img {
     max-width: 100px;
+  }
+}
+.animate {
+  animation-duration: 0.5s;
+  animation-name: spinner;
+  animation-iteration-count: 1;
+}
+@keyframes spinner {
+  0% {
+    transform: rotate(0deg);
+  }
+  // 50% {
+  //   transform: rotate(180deg);
+  // }
+  100% {
+    transform: rotate(-180deg);
   }
 }
 </style>
