@@ -54,7 +54,27 @@ h3 {
 .gap-15 {
   gap: 20px;
 }
-
+.gap-10 {
+  gap: 10px;
+}
+.w-100 {
+  width: 100%;
+}
+.big-text {
+  font-size: 18px;
+}
+.med-text {
+  font-size: 15px;
+}
+.lh-17 {
+  line-height: 17px;
+}
+.red-text {
+  color: rgb(234, 59, 59);
+}
+.bold-text {
+  font-weight: bold;
+}
 button {
   border: none;
   background: none;

@@ -6,13 +6,10 @@
         <transition name="menu-desktop">
           <div class="header__links d-flex" v-if="showMenu">
             <ul class="d-flex f-column">
-              <li>
-                <router-link to="/" @click.stop="ShowMenu">Главная</router-link>
-              </li>
-              <li>
-                <router-link to="/calc" @click.stop="ShowMenu"
-                  >Калькулятор</router-link
-                >
+              <li v-for="(link, index) in hrefs" :key="index">
+                <router-link :to="link.href" @click.stop="ShowMenu">{{
+                  link.title
+                }}</router-link>
               </li>
             </ul>
           </div>
@@ -41,6 +38,20 @@ export default {
   data() {
     return {
       showMenu: false,
+      hrefs: [
+        {
+          href: "/",
+          title: "Главная",
+        },
+        {
+          href: "/calc",
+          title: "Калькулятор",
+        },
+        {
+          href: "/funds",
+          title: "Активы",
+        },
+      ],
     };
   },
   methods: {
