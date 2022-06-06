@@ -35,7 +35,7 @@
               v-if="askValue && this.type === 'ask' && !isNaN(this.curCur)"
             >
               1 {{ selectedAsk }} =
-              {{ this.curCur }}
+              {{ this.curCur + this.curCur * 0.002 }}
               {{ selectedBid }}
             </template>
             <template
@@ -47,7 +47,7 @@
               "
             >
               1 {{ selectedAsk }} =
-              {{ this.curCur }}
+              {{ this.curCur + this.curCur * 0.002 }}
               {{ selectedBid }}
             </template>
           </span>
@@ -70,7 +70,7 @@
               v-if="askValue && this.type === 'bid' && !isNaN(this.curCur)"
             >
               1 {{ selectedBid }} =
-              {{ this.curCur }}
+              {{ this.curCur + this.curCur * 0.002 }}
               {{ selectedAsk }}
             </template>
             <template
@@ -82,7 +82,7 @@
               "
             >
               1 {{ selectedBid }} =
-              {{ this.curCur }}
+              {{ this.curCur + this.curCur * 0.002 }}
               {{ selectedAsk }}
             </template>
           </span>
@@ -668,7 +668,7 @@ export default {
       displayUnitsTop: ["RUB", "USDT", "BTC", "USD"],
       displayUnitsBot: ["RUB", "USDT", "BTC", "USD"],
       selectedAsk: "RUB",
-      selectedBid: "USD",
+      selectedBid: "USDT",
       askValue: null,
       bidValue: null,
       showMoreAsk: false,
