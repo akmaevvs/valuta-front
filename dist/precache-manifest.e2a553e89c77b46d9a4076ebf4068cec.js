@@ -1,10 +1,10 @@
 self.__precacheManifest = (self.__precacheManifest || []).concat([
   {
-    "revision": "9238feff842a10086b78",
-    "url": "/css/Home.4b429cdb.css"
+    "revision": "c6259c979dc523ef7ad8",
+    "url": "/css/Home.a74df5ee.css"
   },
   {
-    "revision": "90e99e83ddf35f5c0687",
+    "revision": "7ad5384b2241ab7f3102",
     "url": "/css/app.b5db6066.css"
   },
   {
@@ -84,16 +84,16 @@ self.__precacheManifest = (self.__precacheManifest || []).concat([
     "url": "/img/telegram-logo-small.535bdfc0.png"
   },
   {
-    "revision": "4c86351b7e83691ec21aca213a3195b9",
+    "revision": "b3dfa25d42ed666a4fa02f2f2f1bc002",
     "url": "/index.html"
   },
   {
-    "revision": "9238feff842a10086b78",
-    "url": "/js/Home.229ff55e.js"
+    "revision": "c6259c979dc523ef7ad8",
+    "url": "/js/Home.2b5fdfd1.js"
   },
   {
-    "revision": "90e99e83ddf35f5c0687",
-    "url": "/js/app.c81d74be.js"
+    "revision": "7ad5384b2241ab7f3102",
+    "url": "/js/app.32e46fd6.js"
   },
   {
     "revision": "6cb44503f3d807a017e5",
