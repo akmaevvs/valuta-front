@@ -562,8 +562,9 @@ export default {
     },
     changeSummaOutVal() {
       this.outputOptions.summaOutVal =
-        parseFloat(this.outputOptions.summaWidthrawVal) *
-        parseFloat(this.outputOptions.commission);
+      this.outputOptions.summaWidthrawVal +
+        (this.outputOptions.summaWidthrawVal +
+        parseFloat(this.outputOptions.commission / 100));
     },
     selectAction(action) {
       this.outputOptions = {};
