@@ -35,7 +35,7 @@
               v-if="askValue && this.type === 'ask' && !isNaN(this.curCur)"
             >
               1 {{ selectedAsk }} =
-              {{ this.curCur + this.curCur * 0.002 }}
+              {{ curCurVal }}
               {{ selectedBid }}
             </template>
             <template
@@ -47,7 +47,7 @@
               "
             >
               1 {{ selectedAsk }} =
-              {{ this.curCur + this.curCur * 0.002 }}
+              {{ curCurVal }}
               {{ selectedBid }}
             </template>
           </span>
@@ -70,7 +70,7 @@
               v-if="askValue && this.type === 'bid' && !isNaN(this.curCur)"
             >
               1 {{ selectedBid }} =
-              {{ this.curCur + this.curCur * 0.002 }}
+              {{ curCurVal }}
               {{ selectedAsk }}
             </template>
             <template
@@ -82,7 +82,7 @@
               "
             >
               1 {{ selectedBid }} =
-              {{ this.curCur + this.curCur * 0.002 }}
+              {{ curCurVal }}
               {{ selectedAsk }}
             </template>
           </span>
@@ -181,6 +181,7 @@ export default {
       fixCurrency: false,
       showRedBorder: false,
       showModal: false,
+      curCurVal: null,
       currencies: [
         {
           id: "aed",
@@ -629,8 +630,8 @@ export default {
           min_bid: "0.1",
         },
       ],
-      selectedMarket: "rubusd",
-      selectedMarketReverse: "usdrub",
+      selectedMarket: "rubusdt",
+      selectedMarketReverse: "usdtrub",
       selectedDepth: [],
       selectedDepthToUsdt: [],
       selectedDepthFromUsdt: [],
@@ -686,6 +687,7 @@ export default {
   },
   components: {},
   computed: {
+
     curValue() {
       if (this.type === "bid") {
         return this.round(1 / this.curCur);
@@ -784,6 +786,12 @@ export default {
         curCur = allSum / this.askValue; // текущий курс = всего руб / введенное значений
         this.curCur = this.round(
           curCur,
+          this.selectedAsk,
+          this.selectedBid,
+          true
+        );
+        this.curCurVal = this.round(
+          curCur + curCur * 0.002,
           this.selectedAsk,
           this.selectedBid,
           true
@@ -887,6 +895,11 @@ export default {
           this.askValue > this.bidValue
             ? this.round(this.askValue / this.bidValue)
             : this.round(this.bidValue / this.askValue);
+
+        this.curCurVal =
+          this.askValue > this.bidValue
+            ? this.round((this.askValue / this.bidValue) + (this.askValue / this.bidValue * 0.002))
+            : this.round((this.bidValue / this.askValue) + (this.bidValue / this.askValue * 0.002));
       }
     },
     changeAskBid() {
@@ -967,6 +980,12 @@ export default {
         curCur = allSum / this.bidValue; // текущий курс = всего руб / введенное значений
         this.curCur = this.round(
           curCur,
+          this.selectedAsk,
+          this.selectedBid,
+          true
+        );
+        this.curCurVal = this.round(
+          curCur + curCur * 0.002,
           this.selectedAsk,
           this.selectedBid,
           true
@@ -1060,6 +1079,11 @@ export default {
           this.askValue > this.bidValue
             ? this.round(this.askValue / this.bidValue)
             : this.round(this.bidValue / this.askValue);
+        
+        this.curCurVal =
+          this.askValue > this.bidValue
+            ? this.round((this.askValue / this.bidValue) + (this.askValue / this.bidValue * 0.002))
+            : this.round((this.bidValue / this.askValue) + (this.bidValue / this.askValue * 0.002));
       }
     },
     selectAsk(askUnit) {
@@ -1124,6 +1148,7 @@ export default {
           .finally(() => {
             this.type = type;
             this.curCur = this.selectedDepth[0].price;
+            this.curCurVal = this.selectedDepth[0].price * 0.002;
             this.askChanged();
             this.loadingDepth = false;
           });
